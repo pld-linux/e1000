@@ -60,31 +60,43 @@ Ten pakiet zawiera sterownik dla Linuksa SMP do kart sieciowych
 %setup -q -n %{_orig_name}-%{version}
 
 %build
-%ifarch %{ix86}
-%{__make} -C src SMP=1 CC="%{kgcc} -DCONFIG_X86_LOCAL_APIC -DSTB_WA" KSRC=%{_kernelsrcdir}
-%endif
-%ifarch ppc
-%{__make} -C src SMP=1 CC="%{kgcc} -msoft-float  -DSTB_WA" KSRC=%{_kernelsrcdir}
-%endif
-%ifnarch %{ix86} ppc
-%{__make} -C src SMP=1 CC="%{kgcc} -DSTB_WA" KSRC=%{_kernelsrcdir}
-%endif
-mv -f src/%{_orig_name}.o src/%{_orig_name}-smp.o
+rm -rf build-done 
+install -d build-done/{UP,SMP}
+cd src
+rm -rf include
+ln -sf %{_kernelsrcdir}/config-up .config
+install -d include/{linux,config}
+ln -sf %{_kernelsrcdir}/include/linux/autoconf.h include/linux/autoconf.h
+ln -sf %{_kernelsrcdir}/include/asm-%{_arch} include/asm
+touch include/config/MARKER
+echo 'obj-m := e1000.o'>Makefile
+echo 'e1000-objs := e1000_main.o e1000_hw.o e1000_param.o e1000_ethtool.o kcompat.o'>>Makefile
 
-%{__make} -C src clean KSRC=%{_kernelsrcdir}
+%{__make} -C %{_kernelsrcdir} SUBDIRS=$PWD O=$PWD V=1 modules
 
-%ifarch ppc
-%{__make} -C src CC="%{kgcc} -msoft-float -DSTB_WA" KSRC=%{_kernelsrcdir}
-%else
-%{__make} -C src CC="%{kgcc} -DSTB_WA" KSRC=%{_kernelsrcdir}
-%endif
+mv e1000.ko ../build-done/UP/
+
+%{__make} -C %{_kernelsrcdir} SUBDIRS=$PWD O=$PWD V=1 mrproper
+
+
+ln -sf %{_kernelsrcdir}/config-smp .config
+rm -rf include
+install -d include/{linux,config}
+ln -sf %{_kernelsrcdir}/include/linux/autoconf.h include/linux/autoconf.h
+ln -sf %{_kernelsrcdir}/include/asm-%{_arch} include/asm
+touch include/config/MARKER
+echo 'obj-m := e1000.o'>Makefile
+echo 'e1000-objs := e1000_main.o e1000_hw.o e1000_param.o e1000_ethtool.o kcompat.o'>>Makefile
+
+%{__make} -C %{_kernelsrcdir} SUBDIRS=$PWD O=$PWD V=1 modules
+mv e1000.ko ../build-done/SMP/
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/misc
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/misc
-install src/%{_orig_name}-smp.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/misc/%{_mod_name}.o
-install src/%{_orig_name}.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/misc/%{_mod_name}.o
+install build-done/SMP/* $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/misc/%{_mod_name}.o
+install build-done/UP/* $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/misc/%{_mod_name}.o
 
 %clean
 rm -rf $RPM_BUILD_ROOT
