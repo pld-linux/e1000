@@ -3,6 +3,8 @@
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	smp		# don't build SMP module
 #
+%define 	no_install_post_strip	1
+
 %define		_orig_name	e1000
 %define		_mod_name	e1000%{?with_dist_kernel:_intel}
 
