@@ -54,10 +54,10 @@ Ten pakiet zawiera sterownik dla Linuksa SMP do kart sieciowych
 %setup -q -n %{_orig_name}-%{version}
 
 %build
-%{__make} -C src SMP=1 CC="%{kgcc} -DCONFIG_X86_LOCAL_APIC -DSTB_WA" KSRC=/usr/src/linux
+%{__make} -C src SMP=1 CC="%{kgcc} -DCONFIG_X86_LOCAL_APIC -DSTB_WA" KSRC=%{_kernelsrcdir}
 mv -f src/%{_orig_name}.o src/%{_orig_name}-smp.o
-%{__make} -C src clean KSRC=/usr/src/linux
-%{__make} -C src CC="%{kgcc} -DSTB_WA" KSRC=/usr/src/linux
+%{__make} -C src clean KSRC=%{_kernelsrcdir}
+%{__make} -C src CC="%{kgcc} -DSTB_WA" KSRC=%{_kernelsrcdir}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -65,8 +65,6 @@ install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc
 install src/%{_orig_name}-smp.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/%{_orig_name}.o
 install src/%{_orig_name}.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/%{_orig_name}.o
-
-gzip -9nf %{_orig_name}.7 README ldistrib.txt
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -85,10 +83,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc *.gz
+%doc %{_orig_name}.7 README ldistrib.txt
 /lib/modules/%{_kernel_ver}/misc/*
 
 %files -n kernel-smp-net-%{_orig_name}
 %defattr(644,root,root,755)
-%doc *.gz
+%doc %{_orig_name}.7 README ldistrib.txt
 /lib/modules/%{_kernel_ver}smp/misc/*
