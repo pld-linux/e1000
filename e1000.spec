@@ -20,7 +20,7 @@ Source0:	ftp://aiedownload.intel.com/df-support/2897/eng/%{_orig_name}-%{version
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.0}
 BuildRequires:	%{kgcc_package}
 BuildRequires:	rpmbuild(macros) >= 1.118
-URL:		http://support.intel.com/support/network/adapter/pro100/
+URL:		http://support.intel.com/support/network/adapter/index.htm#PRO/1000
 %{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
 Provides:	kernel(e1000)
