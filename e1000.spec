@@ -1,6 +1,5 @@
 # conditional build
 # _without_dist_kernel          without distribution kernel
-
 %define		_orig_name	e1000
 
 Summary:	Intel(R) PRO/1000 driver for Linux
@@ -13,7 +12,7 @@ License:	BSD
 Vendor:		Intel Corporation
 Group:		Base/Kernel
 Source0:	ftp://aiedownload.intel.com/df-support/4833/eng/%{_orig_name}-%{version}.tar.gz
-%{!?_without_dist_kernel:BuildRequires:         kernel-headers }
+%{!?_without_dist_kernel:BuildRequires:         kernel-headers > 2.4 }
 BuildRequires:	%{kgcc_package}
 URL:		http://support.intel.com/support/network/adapter/pro100/
 Obsoletes:	e1000
