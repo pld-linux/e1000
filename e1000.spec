@@ -75,16 +75,16 @@ install src/%{_orig_name}.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/%{_o
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/depmod -a -F /boot/System.map-%{_kernel_ver} %{_kernel_ver}
+/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
 
 %postun
-/sbin/depmod -a -F /boot/System.map-%{_kernel_ver} %{_kernel_ver}
+/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
 
 %post	-n kernel-smp-net-%{_orig_name}
-/sbin/depmod -a -F /boot/System.map-%{_kernel_ver}smp %{_kernel_ver}smp
+/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver}smp }%{_kernel_ver}smp
 
 %postun -n kernel-smp-net-%{_orig_name}
-/sbin/depmod -a -F /boot/System.map-%{_kernel_ver}smp %{_kernel_ver}smp
+/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver}smp }%{_kernel_ver}smp
 
 %files
 %defattr(644,root,root,755)
