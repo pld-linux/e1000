@@ -24,12 +24,12 @@ Prereq:		/sbin/depmod
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-This package contains the Linux driver for the Intel(R) PRO/1000 family
-of 10/100/1000 Ethernet network adapters.
+This package contains the Linux driver for the Intel(R) PRO/1000
+family of 10/100/1000 Ethernet network adapters.
 
 %description -l pl
-Ten pakiet zawiera sterownik dla Linuksa do kart sieciowych 10/100/1000Mbit
-z rodziny Intel(R) PRO/1000.
+Ten pakiet zawiera sterownik dla Linuksa do kart sieciowych
+10/100/1000Mbit z rodziny Intel(R) PRO/1000.
 
 %package -n kernel-smp-net-%{_orig_name}
 Summary:	Intel(R) PRO/1000 driver for Linux SMP
@@ -68,7 +68,7 @@ install src/%{_orig_name}.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/%{_o
 
 gzip -9nf %{_orig_name}.7 README ldistrib.txt
 
-%clean 
+%clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
