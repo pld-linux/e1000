@@ -1,5 +1,7 @@
-# conditional build
+#
+# Conditional build:
 # _without_dist_kernel          without distribution kernel
+#
 %define		_orig_name	e1000
 
 Summary:	Intel(R) PRO/1000 driver for Linux
@@ -15,11 +17,11 @@ Source0:	ftp://aiedownload.intel.com/df-support/4833/eng/%{_orig_name}-%{version
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers > 2.4 }
 BuildRequires:	%{kgcc_package}
 URL:		http://support.intel.com/support/network/adapter/pro100/
+%{!?_without_dist_kernel:%requires_releq_kernel_up}
+Requires(post,postun):	/sbin/depmod
+Provides:	kernel(e1000)
 Obsoletes:	e1000
 Obsoletes:	linux-net-e1000
-Provides:	kernel(e1000)
-Prereq:		/sbin/depmod
-%{!?_without_dist_kernel:%requires_releq_kernel_up}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -35,11 +37,11 @@ Summary:	Intel(R) PRO/1000 driver for Linux SMP
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
-Prereq:		/sbin/depmod
 %{!?_without_dist_kernel:%requires_releq_kernel_smp}
+Requires(post,postun):	/sbin/depmod
+Provides:	kernel(e1000)
 Obsoletes:	e1000
 Obsoletes:	linux-net-e1000
-Provides:	kernel(e1000)
 
 %description -n kernel-smp-net-%{_orig_name}
 This package contains the Linux SMP driver for the Intel(R) PRO/1000
@@ -73,16 +75,16 @@ install src/%{_orig_name}.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/%{_o
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/depmod -a
+/sbin/depmod -a -F /boot/System.map-%{_kernel_ver} %{_kernel_ver}
 
 %postun
-/sbin/depmod -a
+/sbin/depmod -a -F /boot/System.map-%{_kernel_ver} %{_kernel_ver}
 
-%post -n kernel-smp-net-%{_orig_name}
-/sbin/depmod -a
+%post	-n kernel-smp-net-%{_orig_name}
+/sbin/depmod -a -F /boot/System.map-%{_kernel_ver}smp %{_kernel_ver}smp
 
 %postun -n kernel-smp-net-%{_orig_name}
-/sbin/depmod -a
+/sbin/depmod -a -F /boot/System.map-%{_kernel_ver}smp %{_kernel_ver}smp
 
 %files
 %defattr(644,root,root,755)
