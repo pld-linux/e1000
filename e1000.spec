@@ -14,6 +14,7 @@ License:	BSD
 Vendor:		Intel Corporation
 Group:		Base/Kernel
 Source0:	ftp://aiedownload.intel.com/df-support/4833/eng/%{_orig_name}-%{version}.tar.gz
+# Source0-md5:	eabb4c64beb14755c56b191a2fdc767a
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers > 2.4 }
 BuildRequires:	%{kgcc_package}
 URL:		http://support.intel.com/support/network/adapter/pro100/
