@@ -2,6 +2,9 @@
 # Conditional build:
 # _without_dist_kernel          without distribution kernel
 #
+%bcond_without	dist_kernel
+%bcond_without	smp
+
 %define		_orig_name	e1000
 
 %{!?_without_dist_kernel:%define	_mod_name %{_orig_name}_intel }
@@ -60,31 +63,31 @@ Ten pakiet zawiera sterownik dla Linuksa SMP do kart sieciowych
 %setup -q -n %{_orig_name}-%{version}
 
 %build
-%ifarch %{ix86}
-%{__make} -C src SMP=1 CC="%{kgcc} -DCONFIG_X86_LOCAL_APIC -DSTB_WA" KSRC=%{_kernelsrcdir}
-%endif
-%ifarch ppc
-%{__make} -C src SMP=1 CC="%{kgcc} -msoft-float  -DSTB_WA" KSRC=%{_kernelsrcdir}
-%endif
-%ifnarch %{ix86} ppc
-%{__make} -C src SMP=1 CC="%{kgcc} -DSTB_WA" KSRC=%{_kernelsrcdir}
-%endif
-mv -f src/%{_orig_name}.o src/%{_orig_name}-smp.o
-
-%{__make} -C src clean KSRC=%{_kernelsrcdir}
-
-%ifarch ppc
-%{__make} -C src CC="%{kgcc} -msoft-float -DSTB_WA" KSRC=%{_kernelsrcdir}
-%else
-%{__make} -C src CC="%{kgcc} -DSTB_WA" KSRC=%{_kernelsrcdir}
-%endif
-
+cd src
+for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
+    if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+        exit 1
+    fi
+    rm -rf include
+    install -d include/{linux,config}
+    ln -sf %{_kernelsrcdir}/config-$cfg .config
+    ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+    ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+    touch include/config/MARKER
+    %{__make} -C %{_kernelsrcdir} clean modules \
+        EXTRA_CFLAGS="-I../include -DFUSE_VERSION='1.1'" \
+        RCS_FIND_IGNORE="-name '*.ko' -o" \
+        M=$PWD O=$PWD \
+        %{?with_verbose:V=1}
+    mv e1000.ko e1000.ko-$cfg
+done
+								
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/misc
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/misc
-install src/%{_orig_name}-smp.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/misc/%{_mod_name}.o
-install src/%{_orig_name}.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/misc/%{_mod_name}.o
+install src/%{_orig_name}.ko-smp $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/misc/%{_mod_name}.ko
+install src/%{_orig_name}.ko-up $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/misc/%{_mod_name}.ko
 
 %clean
 rm -rf $RPM_BUILD_ROOT
