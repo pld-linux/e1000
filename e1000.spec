@@ -1,11 +1,11 @@
 #
 # Conditional build:
-# _without_dist_kernel          without distribution kernel
+%bcond_without	dist_kernel	# without distribution kernel
+%bcond_with	intel_name	# change name e1000 -> e1000_intel
 #
 %define		_orig_name	e1000
-
-%{!?_without_dist_kernel:%define	_mod_name %{_orig_name}_intel }
-%{?_without_dist_kernel:%define		_mod_name %{_orig_name} }
+%{?with_dist_kernel:%define	with_intel_name 1}
+%define		_mod_name	%{_orig_name}%{?with_intel_name:_intel}
 
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
@@ -18,11 +18,11 @@ Vendor:		Intel Corporation
 Group:		Base/Kernel
 Source0:	ftp://aiedownload.intel.com/df-support/2897/eng/%{_orig_name}-%{version}.tar.gz
 # Source0-md5:	c2e66550ab7213df1b1fe26b8a4b5f9a
-%{!?_without_dist_kernel:BuildRequires:	kernel-headers >= 2.4.20 }
+%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.0 }
 BuildRequires:	%{kgcc_package}
 BuildRequires:	rpmbuild(macros) >= 1.118
 URL:		http://support.intel.com/support/network/adapter/pro100/
-%{!?_without_dist_kernel:%requires_releq_kernel_up}
+%{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
 Provides:	kernel(e1000)
 Obsoletes:	e1000
@@ -42,7 +42,7 @@ Summary:	Intel(R) PRO/1000 driver for Linux SMP
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
-%{!?_without_dist_kernel:%requires_releq_kernel_smp}
+%{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
 Provides:	kernel(e1000)
 Obsoletes:	e1000
@@ -66,37 +66,46 @@ cd src
 rm -rf include
 ln -sf %{_kernelsrcdir}/config-up .config
 install -d include/{linux,config}
-ln -sf %{_kernelsrcdir}/include/linux/autoconf.h include/linux/autoconf.h
+ln -sf %{_kernelsrcdir}/include/linux/autoconf-up.h include/linux/autoconf.h
 ln -sf %{_kernelsrcdir}/include/asm-%{_arch} include/asm
 touch include/config/MARKER
 echo 'obj-m := e1000.o'>Makefile
 echo 'e1000-objs := e1000_main.o e1000_hw.o e1000_param.o e1000_ethtool.o kcompat.o'>>Makefile
 
-%{__make} -C %{_kernelsrcdir} SUBDIRS=$PWD O=$PWD V=1 modules
+%{__make} -C %{_kernelsrcdir} modules \
+	SUBDIRS=$PWD \
+	O=$PWD \
+	V=1
 
-mv e1000.ko ../build-done/UP/
+mv e1000.ko ../build-done/UP
 
-%{__make} -C %{_kernelsrcdir} SUBDIRS=$PWD O=$PWD V=1 mrproper
-
+%{__make} -C %{_kernelsrcdir} mrproper \
+	SUBDIRS=$PWD \
+	O=$PWD \
+	V=1
 
 ln -sf %{_kernelsrcdir}/config-smp .config
 rm -rf include
 install -d include/{linux,config}
-ln -sf %{_kernelsrcdir}/include/linux/autoconf.h include/linux/autoconf.h
+ln -sf %{_kernelsrcdir}/include/linux/autoconf-smp.h include/linux/autoconf.h
 ln -sf %{_kernelsrcdir}/include/asm-%{_arch} include/asm
 touch include/config/MARKER
 echo 'obj-m := e1000.o'>Makefile
 echo 'e1000-objs := e1000_main.o e1000_hw.o e1000_param.o e1000_ethtool.o kcompat.o'>>Makefile
 
-%{__make} -C %{_kernelsrcdir} SUBDIRS=$PWD O=$PWD V=1 modules
-mv e1000.ko ../build-done/SMP/
+%{__make} -C %{_kernelsrcdir} modules \
+	SUBDIRS=$PWD \
+	O=$PWD \
+	V=1
+
+mv e1000.ko ../build-done/SMP
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/misc
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/misc
-install build-done/SMP/* $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/misc/
-install build-done/UP/* $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/misc/
+install build-done/SMP/* $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/misc
+install build-done/UP/* $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/misc
 
 %clean
 rm -rf $RPM_BUILD_ROOT
