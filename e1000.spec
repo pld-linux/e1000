@@ -10,7 +10,7 @@ Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
 Name:		kernel-net-%{_orig_name}
 Version:	5.7.6
-%define	_rel	1
+%define	_rel	2
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	BSD
 Vendor:		Intel Corporation
@@ -75,15 +75,17 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
         RCS_FIND_IGNORE="-name '*.ko' -o" \
         M=$PWD O=$PWD \
         %{?with_verbose:V=1}
-    mv e1000.ko e1000.ko-$cfg
+	mv e1000{,-$cfg}.ko
 done
-								
+
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/misc
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/misc
-install src/%{_orig_name}.ko-smp $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/misc/%{_mod_name}.ko
-install src/%{_orig_name}.ko-up $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/misc/%{_mod_name}.ko
+
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/kernel/drivers/net/misc
+install src/e1000-up.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/misc/e1000.ko
+%if %{with smp} && %{with dist_kernel}
+install src/e1000-smp.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/misc/e1000.ko
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
