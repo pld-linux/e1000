@@ -4,8 +4,8 @@
 #
 %define		_orig_name	e1000
 
-%{!?_without_dist_kernel:BuildRequires: %define	_mod_name %{_orig_name}_intel }
-%{!?_without_dist_kernel:BuildRequires: %define	_mod_name %{_orig_name} }
+%{!?_without_dist_kernel:%define	_mod_name %{_orig_name}_intel }
+%{?_without_dist_kernel:%define		_mod_name %{_orig_name} }
 
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
