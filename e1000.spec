@@ -2,13 +2,13 @@
 # _without_dist_kernel          without distribution kernel
 
 %define		_orig_name	e1000
-%define		_rel 1
 
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
 Name:		kernel-net-%{_orig_name}
 Version:	4.3.15
 Release:	%{_rel}@%{_kernel_ver_str}
+%define	_rel	2
 License:	BSD
 Vendor:		Intel Corporation
 Group:		Base/Kernel
