@@ -7,14 +7,14 @@
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
 Name:		kernel-net-%{_orig_name}
-Version:	4.4.12
+Version:	5.2.20
 %define	_rel	1
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	BSD
 Vendor:		Intel Corporation
 Group:		Base/Kernel
-Source0:	ftp://aiedownload.intel.com/df-support/4833/eng/%{_orig_name}-%{version}.tar.gz
-# Source0-md5:	eabb4c64beb14755c56b191a2fdc767a
+Source0:	ftp://aiedownload.intel.com/df-support/2897/eng/%{_orig_name}-%{version}.tar.gz
+# Source0-md5:	52a65f13fda89257edbc4507958c6e3a
 %{!?_without_dist_kernel:BuildRequires:	kernel-headers > 2.4 }
 BuildRequires:	%{kgcc_package}
 BuildRequires:	rpmbuild(macros) >= 1.118
