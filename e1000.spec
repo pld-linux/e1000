@@ -1,14 +1,10 @@
 #
 # Conditional build:
-# _without_dist_kernel          without distribution kernel
+%bcond_without	dist_kernel	# without distribution kernel
+%bcond_without	smp		# don't build SMP module
 #
-%bcond_without	dist_kernel
-%bcond_without	smp
-
 %define		_orig_name	e1000
-
-%{!?_without_dist_kernel:%define	_mod_name %{_orig_name}_intel }
-%{?_without_dist_kernel:%define		_mod_name %{_orig_name} }
+%define		_mod_name	e1000%{?with_dist_kernel:_intel}
 
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
@@ -21,11 +17,11 @@ Vendor:		Intel Corporation
 Group:		Base/Kernel
 Source0:	ftp://aiedownload.intel.com/df-support/2897/eng/%{_orig_name}-%{version}.tar.gz
 # Source0-md5:	f6e55d5f3a112dca04397e62d720ef84
-%{!?_without_dist_kernel:BuildRequires:	kernel-headers >= 2.4.20 }
+%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.0}
 BuildRequires:	%{kgcc_package}
 BuildRequires:	rpmbuild(macros) >= 1.118
 URL:		http://support.intel.com/support/network/adapter/pro100/
-%{!?_without_dist_kernel:%requires_releq_kernel_up}
+%{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
 Provides:	kernel(e1000)
 Obsoletes:	e1000
@@ -45,7 +41,7 @@ Summary:	Intel(R) PRO/1000 driver for Linux SMP
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
-%{!?_without_dist_kernel:%requires_releq_kernel_smp}
+%{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
 Provides:	kernel(e1000)
 Obsoletes:	e1000
