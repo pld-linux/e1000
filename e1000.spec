@@ -1,30 +1,28 @@
 #
 # Conditional build:
-%bcond_without	dist_kernel	# without distribution kernel
+%bcond_without	dist_kernel	# allow non-distribution kernel
 %bcond_without	smp		# don't build SMP module
+%bcond_with	verbose		# verbose build (V=1)
 #
-%define 	no_install_post_strip	1
-
-%define		_orig_name	e1000
-%define		_mod_name	e1000%{?with_dist_kernel:_intel}
-
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
-Name:		kernel-net-%{_orig_name}
-Version:	5.7.6
-%define	_rel	2
+Name:		kernel-net-e1000
+Version:	6.0.54
+%define		_rel	1
 Release:	%{_rel}@%{_kernel_ver_str}
-License:	BSD
+License:	GPL v2
 Vendor:		Intel Corporation
 Group:		Base/Kernel
-Source0:	ftp://aiedownload.intel.com/df-support/2897/eng/%{_orig_name}-%{version}.tar.gz
-# Source0-md5:	1e64bc52552527837b4a83e15e70a35d
-%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.0}
-BuildRequires:	%{kgcc_package}
-BuildRequires:	rpmbuild(macros) >= 1.118
+Source0:	ftp://aiedownload.intel.com/df-support/2897/eng/e1000-%{version}.tar.gz
+# Source0-md5:	4e8c7f8c4485a6ebe19380db027cd87e
 URL:		http://support.intel.com/support/network/adapter/index.htm#PRO/1000
-%{?with_dist_kernel:%requires_releq_kernel_up}
+%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
+BuildRequires:	rpmbuild(macros) >= 1.211
 Requires(post,postun):	/sbin/depmod
+%if %{with dist_kernel}
+%requires_releq_kernel_up
+Requires(postun):	%releq_kernel_up
+%endif
 Provides:	kernel(e1000)
 Obsoletes:	e1000
 Obsoletes:	linux-net-e1000
@@ -38,56 +36,74 @@ family of 10/100/1000 Ethernet network adapters.
 Ten pakiet zawiera sterownik dla Linuksa do kart sieciowych
 10/100/1000Mbit z rodziny Intel(R) PRO/1000.
 
-%package -n kernel-smp-net-%{_orig_name}
+%package -n kernel-smp-net-e1000
 Summary:	Intel(R) PRO/1000 driver for Linux SMP
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
+%if %{with dist_kernel}
+%requires_releq_kernel_smp
+Requires(postun):	%releq_kernel_smp
+%endif
 Provides:	kernel(e1000)
 Obsoletes:	e1000
 Obsoletes:	linux-net-e1000
 
-%description -n kernel-smp-net-%{_orig_name}
+%description -n kernel-smp-net-e1000
 This package contains the Linux SMP driver for the Intel(R) PRO/1000
 family of 10/100/1000 Ethernet network adapters.
 
-%description -n kernel-smp-net-%{_orig_name} -l pl
+%description -n kernel-smp-net-e1000 -l pl
 Ten pakiet zawiera sterownik dla Linuksa SMP do kart sieciowych
 10/100/1000Mbit z rodziny Intel(R) PRO/1000.
 
 %prep
-%setup -q -n %{_orig_name}-%{version}
+%setup -q -n e1000-%{version}
 
 %build
 cd src
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-    if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-        exit 1
-    fi
-    rm -rf include
-    install -d include/{linux,config}
-    ln -sf %{_kernelsrcdir}/config-$cfg .config
-    ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
-    ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
-    touch include/config/MARKER
-    %{__make} -C %{_kernelsrcdir} clean modules \
-        EXTRA_CFLAGS="-I../include -DFUSE_VERSION='1.1'" \
-        RCS_FIND_IGNORE="-name '*.ko' -o" \
-        M=$PWD O=$PWD \
-        %{?with_verbose:V=1}
-	mv e1000{,-$cfg}.ko
+	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+		exit 1
+	fi
+	rm -rf include
+	install -d include/{linux,config}
+	ln -sf %{_kernelsrcdir}/config-$cfg .config
+	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+	touch include/config/MARKER
+
+cat >Makefile <<EOF
+obj-m := e1000i.o
+e1000i-objs := e1000_main.o e1000_hw.o e1000_param.o e1000_ethtool.o kcompat.o
+EOF
+
+	%{__make} -C %{_kernelsrcdir} clean \
+		RCS_FIND_IGNORE="-name '*.ko' -o" \
+		M=$PWD O=$PWD \
+		%{?with_verbose:V=1}
+	%{__make} -C %{_kernelsrcdir} modules \
+		EXTRA_CFLAGS='-DE1000_NAPI' \
+		CC="%{__cc}" CPP="%{__cpp}" \
+		M=$PWD O=$PWD \
+		%{?with_verbose:V=1}
+
+	mv e1000i{,-$cfg}.ko
 done
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/kernel/drivers/net/misc
-install src/e1000-up.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/misc/e1000.ko
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/kernel/drivers/net
+cd src
+install e1000i-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/e1000i.ko
 %if %{with smp} && %{with dist_kernel}
-install src/e1000-smp.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/misc/e1000.ko
+install e1000i-smp.ko \
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/e1000i.ko
 %endif
+cd ..
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -98,18 +114,18 @@ rm -rf $RPM_BUILD_ROOT
 %postun
 %depmod %{_kernel_ver}
 
-%post	-n kernel-smp-net-%{_orig_name}
+%post	-n kernel-smp-net-e1000
 %depmod %{_kernel_ver}smp
 
-%postun -n kernel-smp-net-%{_orig_name}
+%postun -n kernel-smp-net-e1000
 %depmod %{_kernel_ver}smp
 
 %files
 %defattr(644,root,root,755)
-%doc %{_orig_name}.7 README ldistrib.txt
-/lib/modules/%{_kernel_ver}/kernel/drivers/net/misc/*
+%doc e1000.7 README ldistrib.txt
+/lib/modules/%{_kernel_ver}/kernel/drivers/net/*
 
-%files -n kernel-smp-net-%{_orig_name}
+%files -n kernel-smp-net-e1000
 %defattr(644,root,root,755)
-%doc %{_orig_name}.7 README ldistrib.txt
-/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/misc/*
+%doc e1000.7 README ldistrib.txt
+/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/*
