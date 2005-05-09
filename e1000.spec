@@ -14,7 +14,7 @@ License:	GPL v2
 Vendor:		Intel Corporation
 Group:		Base/Kernel
 Source0:	ftp://aiedownload.intel.com/df-support/2897/eng/e1000-%{version}.tar.gz
-# Source0-md5:	4e8c7f8c4485a6ebe19380db027cd87e
+# Source0-md5:	5eca27a8423433e1a875d260b9f32f6d
 URL:		http://support.intel.com/support/network/adapter/index.htm#PRO/1000
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.211
