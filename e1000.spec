@@ -125,7 +125,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc e1000.7 README ldistrib.txt
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/*
 
+%if %{with smp} && %{with dist_kernel}
 %files -n kernel-smp-net-e1000
 %defattr(644,root,root,755)
 %doc e1000.7 README ldistrib.txt
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/net/*
+%endif
