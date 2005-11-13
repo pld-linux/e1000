@@ -8,7 +8,7 @@ Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
 Name:		kernel-net-e1000
 Version:	6.2.15
-%define		_rel	0.1
+%define		_rel	1
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Vendor:		Intel Corporation
@@ -18,6 +18,9 @@ Source0:	ftp://aiedownload.intel.com/df-support/9180/eng/e1000-%{version}.tar.gz
 URL:		http://support.intel.com/support/network/adapter/index.htm#PRO/1000
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.211
+%ifarch sparc
+BuildRequires:	crosssparc64-gcc
+%endif
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
 %requires_releq_kernel_up
@@ -27,6 +30,11 @@ Provides:	kernel(e1000)
 Obsoletes:	e1000
 Obsoletes:	linux-net-e1000
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%ifarch sparc
+%define         _target_base_arch       sparc64
+%define         _target_cpu             sparc64
+%endif
 
 %description
 This package contains the Linux driver for the Intel(R) PRO/1000
@@ -71,7 +79,17 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	install -d include/{linux,config}
 	ln -sf %{_kernelsrcdir}/config-$cfg .config
 	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+%ifarch ppc
+	if [ -d "%{_kernelsrcdir}/include/asm-powerpc" ]; then
+		install -d include/asm
+		cp -a %{_kernelsrcdir}/include/asm-%{_target_base_arch}/* include/asm
+		cp -a %{_kernelsrcdir}/include/asm-powerpc/* include/asm
+	else
+		ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+	fi
+%else
 	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+%endif
 	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg Module.symvers
 	touch include/config/MARKER
 
@@ -85,6 +103,11 @@ EOF
 		M=$PWD O=$PWD \
 		%{?with_verbose:V=1}
 	%{__make} -C %{_kernelsrcdir} modules \
+%if "%{_target_base_arch}" != "%{_arch}"
+                ARCH=%{_target_base_arch} \
+                CROSS_COMPILE=%{_target_cpu}-pld-linux- \
+%endif
+                HOSTCC="%{__cc}" \
 		EXTRA_CFLAGS='-DE1000_NAPI' \
 		CC="%{__cc}" CPP="%{__cpp}" \
 		M=$PWD O=$PWD \
