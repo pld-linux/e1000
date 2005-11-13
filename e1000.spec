@@ -7,14 +7,14 @@
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
 Name:		kernel-net-e1000
-Version:	6.0.60
-%define		_rel	1
+Version:	6.2.15
+%define		_rel	0.1
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Vendor:		Intel Corporation
 Group:		Base/Kernel
-Source0:	ftp://aiedownload.intel.com/df-support/2897/eng/e1000-%{version}.tar.gz
-# Source0-md5:	3787ae0bebc305e84356185492312e8a
+Source0:	ftp://aiedownload.intel.com/df-support/9180/eng/e1000-%{version}.tar.gz
+# Source0-md5:	83f16b6b3f255730e0649f23cfc01509
 URL:		http://support.intel.com/support/network/adapter/index.htm#PRO/1000
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.211
