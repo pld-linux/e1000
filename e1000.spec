@@ -109,7 +109,6 @@ EOF
 %endif
                 HOSTCC="%{__cc}" \
 		EXTRA_CFLAGS='-DE1000_NAPI' \
-		CC="%{__cc}" CPP="%{__cpp}" \
 		M=$PWD O=$PWD \
 		%{?with_verbose:V=1}
 
