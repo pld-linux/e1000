@@ -18,9 +18,6 @@ Source0:	ftp://aiedownload.intel.com/df-support/9180/eng/e1000-%{version}.tar.gz
 URL:		http://support.intel.com/support/network/adapter/index.htm#PRO/1000
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.211
-%ifarch sparc
-BuildRequires:	crosssparc64-gcc
-%endif
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
 %requires_releq_kernel_up
@@ -30,11 +27,6 @@ Provides:	kernel(e1000)
 Obsoletes:	e1000
 Obsoletes:	linux-net-e1000
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
-%ifarch sparc
-%define         _target_base_arch       sparc64
-%define         _target_cpu             sparc64
-%endif
 
 %description
 This package contains the Linux driver for the Intel(R) PRO/1000
