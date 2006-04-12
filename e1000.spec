@@ -4,19 +4,18 @@
 %bcond_without	smp		# don't build SMP module
 %bcond_with	verbose		# verbose build (V=1)
 #
+%define		_rel	1
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
 Name:		kernel-net-e1000
 Version:	6.2.15
-%define		_rel	1
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
-Vendor:		Intel Corporation
 Group:		Base/Kernel
 Source0:	ftp://aiedownload.intel.com/df-support/9180/eng/e1000-%{version}.tar.gz
 # Source0-md5:	83f16b6b3f255730e0649f23cfc01509
 URL:		http://support.intel.com/support/network/adapter/index.htm#PRO/1000
-%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
+%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.211
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
@@ -96,10 +95,10 @@ EOF
 		%{?with_verbose:V=1}
 	%{__make} -C %{_kernelsrcdir} modules \
 %if "%{_target_base_arch}" != "%{_arch}"
-                ARCH=%{_target_base_arch} \
-                CROSS_COMPILE=%{_target_cpu}-pld-linux- \
+		ARCH=%{_target_base_arch} \
+		CROSS_COMPILE=%{_target_cpu}-pld-linux- \
 %endif
-                HOSTCC="%{__cc}" \
+		HOSTCC="%{__cc}" \
 		EXTRA_CFLAGS='-DE1000_NAPI' \
 		M=$PWD O=$PWD/o \
 		%{?with_verbose:V=1}
