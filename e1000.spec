@@ -83,7 +83,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} o/include/asm
 %endif
 
-cat >o/Makefile <<EOF
+cat >Makefile <<EOF
 obj-m := e1000i.o
 e1000i-objs := e1000_main.o e1000_hw.o e1000_param.o e1000_ethtool.o kcompat.o
 EOF
@@ -91,6 +91,8 @@ EOF
 	%{__make} -C %{_kernelsrcdir} O=$PWD/o prepare scripts
 	%{__make} -C %{_kernelsrcdir} clean \
 		RCS_FIND_IGNORE="-name '*.ko' -o" \
+		SYSSRC=%{_kernelsrcdir} \
+		SYSOUT=$PWD/o \
 		M=$PWD O=$PWD/o \
 		%{?with_verbose:V=1}
 	%{__make} -C %{_kernelsrcdir} modules \
@@ -100,10 +102,12 @@ EOF
 %endif
 		HOSTCC="%{__cc}" \
 		EXTRA_CFLAGS='-DE1000_NAPI' \
+		SYSSRC=%{_kernelsrcdir} \
+		SYSOUT=$PWD/o \
 		M=$PWD O=$PWD/o \
 		%{?with_verbose:V=1}
 
-	mv e1000{,i-$cfg}.ko
+	mv e1000i{,-$cfg}.ko
 done
 
 %install
