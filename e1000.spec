@@ -73,7 +73,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
 %ifarch ppc
 	if [ -d "%{_kernelsrcdir}/include/asm-powerpc" ]; then
-		install -d include/asm
+		install -d o/include/asm
 		cp -a %{_kernelsrcdir}/include/asm-%{_target_base_arch}/* o/include/asm
 		cp -a %{_kernelsrcdir}/include/asm-powerpc/* o/include/asm
 	else
