@@ -88,7 +88,7 @@ obj-m := e1000i.o
 e1000i-objs := e1000_main.o e1000_hw.o e1000_param.o e1000_ethtool.o kcompat.o
 EOF
 
-	%{__make} -C %{_kernelsrcdir} O=$PWD/o prepare scripts
+	%{__make} -j1 -C %{_kernelsrcdir} O=$PWD/o prepare scripts
 	%{__make} -C %{_kernelsrcdir} clean \
 		RCS_FIND_IGNORE="-name '*.ko' -o" \
 		SYSSRC=%{_kernelsrcdir} \
