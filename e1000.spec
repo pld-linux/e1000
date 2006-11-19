@@ -16,7 +16,7 @@ Source0:	ftp://aiedownload.intel.com/df-support/9180/eng/e1000-%{version}.tar.gz
 # Source0-md5:	cb9f601df6c60f889aaabec475ba2089
 URL:		http://support.intel.com/support/network/adapter/index.htm#PRO/1000
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.7}
-BuildRequires:	rpmbuild(macros) >= 1.308
+BuildRequires:	rpmbuild(macros) >= 1.330
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
 %requires_releq_kernel_up
