@@ -59,16 +59,13 @@ Ten pakiet zawiera sterownik dla Linuksa SMP do kart sieciowych
 
 %prep
 %setup -q -n e1000-%{version}
-
-%build
-cd src
-
-cat >Makefile <<EOF
+cat > src/Makefile <<'EOF'
 obj-m := e1000i.o
 e1000i-objs := e1000_main.o e1000_hw.o e1000_param.o e1000_ethtool.o kcompat.o
 EOF
 
-%build_kernel_modules -m e1000i
+%build
+%build_kernel_modules -C src -m e1000i
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -93,11 +90,11 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc e1000.7 README ldistrib.txt
-/lib/modules/%{_kernel_ver}/kernel/drivers/net/*
+/lib/modules/%{_kernel_ver}/kernel/drivers/net/e1000i.ko*
 
 %if %{with smp} && %{with dist_kernel}
 %files -n kernel%{_alt_kernel}-smp-net-e1000
 %defattr(644,root,root,755)
 %doc e1000.7 README ldistrib.txt
-/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/*
+/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/e1000i.ko*
 %endif
