@@ -62,66 +62,19 @@ Ten pakiet zawiera sterownik dla Linuksa SMP do kart sieciowych
 
 %build
 cd src
-for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-		exit 1
-	fi
-	rm -rf o
-	install -d o/include/{linux,config}
-	ln -sf %{_kernelsrcdir}/config-$cfg o/.config
-	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
-	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
-%ifarch ppc
-	if [ -d "%{_kernelsrcdir}/include/asm-powerpc" ]; then
-		install -d o/include/asm
-		cp -a %{_kernelsrcdir}/include/asm-%{_target_base_arch}/* o/include/asm
-		cp -a %{_kernelsrcdir}/include/asm-powerpc/* o/include/asm
-	else
-		ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} o/include/asm
-	fi
-%else
-	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} o/include/asm
-%endif
 
 cat >Makefile <<EOF
 obj-m := e1000i.o
 e1000i-objs := e1000_main.o e1000_hw.o e1000_param.o e1000_ethtool.o kcompat.o
 EOF
 
-	%{__make} -j1 -C %{_kernelsrcdir} O=$PWD/o prepare scripts
-	%{__make} -C %{_kernelsrcdir} clean \
-		RCS_FIND_IGNORE="-name '*.ko' -o" \
-		SYSSRC=%{_kernelsrcdir} \
-		SYSOUT=$PWD/o \
-		M=$PWD O=$PWD/o \
-		%{?with_verbose:V=1}
-	%{__make} -C %{_kernelsrcdir} modules \
-%if "%{_target_base_arch}" != "%{_arch}"
-		ARCH=%{_target_base_arch} \
-		CROSS_COMPILE=%{_target_cpu}-pld-linux- \
-%endif
-		HOSTCC="%{__cc}" \
-		EXTRA_CFLAGS='-DE1000_NAPI' \
-		SYSSRC=%{_kernelsrcdir} \
-		SYSOUT=$PWD/o \
-		M=$PWD O=$PWD/o \
-		%{?with_verbose:V=1}
-
-	mv e1000i{,-$cfg}.ko
-done
+%build_kernel_modules -m e1000i
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/kernel/drivers/net
-cd src
-install e1000i-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
-	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/e1000i.ko
-%if %{with smp} && %{with dist_kernel}
-install e1000i-smp.ko \
-	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/e1000i.ko
-%endif
-cd ..
+%install_kernel_modules -m src/e1000i -d kernel/drivers/net
 
 %clean
 rm -rf $RPM_BUILD_ROOT
