@@ -4,7 +4,7 @@
 %bcond_without	smp		# don't build SMP module
 %bcond_with	verbose		# verbose build (V=1)
 #
-%define		_rel	1
+%define		_rel	2
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
 Name:		kernel%{_alt_kernel}-net-e1000
@@ -60,17 +60,16 @@ Ten pakiet zawiera sterownik dla Linuksa SMP do kart sieciowych
 %prep
 %setup -q -n e1000-%{version}
 cat > src/Makefile <<'EOF'
-obj-m := e1000i.o
-e1000i-objs := e1000_main.o e1000_hw.o e1000_param.o e1000_ethtool.o kcompat.o
+obj-m := e1000.o
+e1000-objs := e1000_main.o e1000_hw.o e1000_param.o e1000_ethtool.o kcompat.o
 EOF
 
 %build
-%build_kernel_modules -C src -m e1000i
+%build_kernel_modules -C src -m e1000
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
-%install_kernel_modules -m src/e1000i -d kernel/drivers/net
+%install_kernel_modules -m src/e1000 -d kernel/drivers/net -n e1000 -s current
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -90,11 +89,13 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc e1000.7 README ldistrib.txt
-/lib/modules/%{_kernel_ver}/kernel/drivers/net/e1000i.ko*
+/etc/modprobe.d/%{_kernel_ver}/e1000.conf
+/lib/modules/%{_kernel_ver}/kernel/drivers/net/e1000*.ko*
 
 %if %{with smp} && %{with dist_kernel}
 %files -n kernel%{_alt_kernel}-smp-net-e1000
 %defattr(644,root,root,755)
 %doc e1000.7 README ldistrib.txt
-/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/e1000i.ko*
+/etc/modprobe.d/%{_kernel_ver}smp/e1000.conf
+/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/e1000*.ko*
 %endif
