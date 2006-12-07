@@ -4,7 +4,7 @@
 %bcond_without	smp		# don't build SMP module
 %bcond_with	verbose		# verbose build (V=1)
 #
-%define		_rel	2
+%define		_rel	3
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
 Name:		kernel%{_alt_kernel}-net-e1000
@@ -25,6 +25,8 @@ Requires(postun):	%releq_kernel_up
 Provides:	kernel(e1000)
 Obsoletes:	e1000
 Obsoletes:	linux-net-e1000
+# gcc fails on AC
+ExcludeArch:	ppc
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
