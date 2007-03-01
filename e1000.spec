@@ -5,16 +5,16 @@
 %bcond_without	smp		# don't build SMP module
 %bcond_with	verbose		# verbose build (V=1)
 #
-%define		_rel	2
+%define		_rel	1
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
 Name:		kernel%{_alt_kernel}-net-e1000
-Version:	7.2.9
+Version:	7.3.20
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	ftp://aiedownload.intel.com/df-support/9180/eng/e1000-%{version}.tar.gz
-# Source0-md5:	cb9f601df6c60f889aaabec475ba2089
+# Source0-md5:	5775b2aae2172be6c14c060c028d4696
 URL:		http://support.intel.com/support/network/adapter/index.htm#PRO/1000
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.330
