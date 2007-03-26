@@ -92,13 +92,15 @@ rm -rf $RPM_BUILD_ROOT
 %postun -n kernel%{_alt_kernel}-smp-net-e1000
 %depmod %{_kernel_ver}smp
 
+%if %{with up}
 %files
 %defattr(644,root,root,755)
 %doc e1000.7 README ldistrib.txt
 /etc/modprobe.d/%{_kernel_ver}/e1000.conf
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/e1000*.ko*
+%endif
 
-%if %{with smp} && %{with dist_kernel}
+%if %{with smp}
 %files -n kernel%{_alt_kernel}-smp-net-e1000
 %defattr(644,root,root,755)
 %doc e1000.7 README ldistrib.txt
