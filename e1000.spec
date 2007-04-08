@@ -13,10 +13,9 @@ Version:	7.4.35
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
-#Source0:	ftp://aiedownload.intel.com/df-support/9180/eng/e1000-%{version}.tar.gz
 Source0:	http://dl.sourceforge.net/e1000/e1000-%{version}.tar.gz
 # Source0-md5:	cac540f221e3d9589dffc679c490a6a2
-URL:		http://support.intel.com/support/network/adapter/index.htm#PRO/1000
+URL:		http://sourceforge.net/projects/e1000/
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.330
 Requires(post,postun):	/sbin/depmod
