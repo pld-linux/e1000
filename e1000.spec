@@ -7,6 +7,10 @@
 %bcond_with	verbose		# verbose build (V=1)
 %bcond_with	grsec_kernel	# build for kernel-grsecurity
 
+%ifarch sparc
+%undefine	with_smp
+%endif
+
 %if %{without kernel}
 %undefine with_dist_kernel
 %endif
@@ -17,7 +21,7 @@
 %undefine	with_userspace
 %endif
 
-%define		_rel	1
+%define		_rel	2
 %define		pname	e1000
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
