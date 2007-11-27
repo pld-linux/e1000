@@ -11,12 +11,12 @@
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
 Name:		kernel%{_alt_kernel}-net-e1000
-Version:	7.6.5
+Version:	7.6.12
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/e1000/%{_mod_name}-%{version}.tar.gz
-# Source0-md5:	99563ec2ae618c1ae6c20d38f6c7ffc3
+# Source0-md5:	e3a54d3a2862b378eeddfa2ce6298cae
 URL:		http://sourceforge.net/projects/e1000/
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.330
@@ -96,7 +96,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with up}
 %files
 %defattr(644,root,root,755)
-%doc e1000.7 README ldistrib.txt
+%doc e1000.7 README 
 /etc/modprobe.d/%{_kernel_ver}/%{_mod_name}.conf
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/%{_mod_name}*.ko*
 %endif
@@ -104,7 +104,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with smp}
 %files -n kernel%{_alt_kernel}-smp-net-e1000
 %defattr(644,root,root,755)
-%doc e1000.7 README ldistrib.txt
+%doc e1000.7 README
 /etc/modprobe.d/%{_kernel_ver}smp/%{_mod_name}.conf
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/net/%{_mod_name}*.ko*
 %endif
