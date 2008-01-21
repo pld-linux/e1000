@@ -1,18 +1,18 @@
 #
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
-%bcond_with	verbose		# verbose build (V=1)
 #
+%define		pname	e1000
 %define		_rel	2
 #
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
-Name:		e1000
+Name:		%{pname}%{_alt_kernel}
 Version:	7.6.12
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
-Source0:	http://dl.sourceforge.net/e1000/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/e1000/%{pname}-%{version}.tar.gz
 # Source0-md5:	e3a54d3a2862b378eeddfa2ce6298cae
 URL:		http://sourceforge.net/projects/e1000/
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
@@ -50,7 +50,7 @@ Ten pakiet zawiera sterownik dla Linuksa do kart sieciowych
 10/100/1000Mbit z rodziny Intel(R) PRO/1000.
 
 %prep
-%setup -q
+%setup -q -n %{pname}-%{version}
 cat > src/Makefile <<'EOF'
 obj-m := e1000.o
 e1000-objs := e1000_main.o e1000_82540.o e1000_82542.o e1000_82571.o e1000_82541.o \
@@ -59,11 +59,11 @@ e1000_manage.o e1000_param.o e1000_ethtool.o kcompat.o e1000_api.o
 EOF
 
 %build
-%build_kernel_modules -C src -m %{name}
+%build_kernel_modules -C src -m %{pname}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%install_kernel_modules -m src/%{name} -d kernel/drivers/net -n %{name} -s current
+%install_kernel_modules -m src/%{pname} -d kernel/drivers/net -n %{pname} -s current
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -77,5 +77,5 @@ rm -rf $RPM_BUILD_ROOT
 %files	-n kernel%{_alt_kernel}-net-e1000
 %defattr(644,root,root,755)
 %doc e1000.7 README
-/etc/modprobe.d/%{_kernel_ver}/%{name}.conf
-/lib/modules/%{_kernel_ver}/kernel/drivers/net/%{name}*.ko*
+/etc/modprobe.d/%{_kernel_ver}/%{pname}.conf
+/lib/modules/%{_kernel_ver}/kernel/drivers/net/%{pname}*.ko*
