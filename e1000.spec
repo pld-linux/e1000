@@ -4,17 +4,17 @@
 %bcond_with	verbose		# verbose build (V=1)
 #
 %define		pname	e1000
-%define		_rel	2
+%define		_rel	1
 #
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
 Name:		%{pname}%{_alt_kernel}
-Version:	7.6.12
+Version:	7.6.15
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/e1000/%{pname}-%{version}.tar.gz
-# Source0-md5:	e3a54d3a2862b378eeddfa2ce6298cae
+# Source0-md5:	a5df155b530e7cfd7057771cf542ee4c
 URL:		http://sourceforge.net/projects/e1000/
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
 BuildRequires:	rpmbuild(macros) >= 1.379
@@ -57,6 +57,8 @@ obj-m := e1000.o
 e1000-objs := e1000_main.o e1000_82540.o e1000_82542.o e1000_82571.o e1000_82541.o \
 e1000_82543.o e1000_ich8lan.o e1000_80003es2lan.o e1000_mac.o e1000_nvm.o e1000_phy.o \
 e1000_manage.o e1000_param.o e1000_ethtool.o kcompat.o e1000_api.o
+
+EXTRA_CFLAGS=-DDRIVER_E1000
 EOF
 
 %build
