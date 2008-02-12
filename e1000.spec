@@ -4,7 +4,7 @@
 %bcond_with	verbose		# verbose build (V=1)
 #
 %define		pname	e1000
-%define		_rel	3
+%define		_rel	4
 #
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
