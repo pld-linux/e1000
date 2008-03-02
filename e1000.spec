@@ -4,13 +4,13 @@
 %bcond_with	verbose		# verbose build (V=1)
 #
 %define		pname	e1000
-%define		_rel	1
+%define		rel	1
 #
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
 Name:		%{pname}%{_alt_kernel}
 Version:	7.6.15.4
-Release:	%{_rel}
+Release:	%{rel}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/e1000/%{pname}-%{version}.tar.gz
@@ -29,9 +29,9 @@ Ten pakiet zawiera sterownik dla Linuksa do kart sieciowych
 10/100/1000Mbit z rodziny Intel(R) PRO/1000.
 
 %package -n kernel%{_alt_kernel}-net-e1000
-Summary:	Intel(R) PRO/1000 driver for Linux SMP
+Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
-Release:	%{_rel}@%{_kernel_ver_str}
+Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
