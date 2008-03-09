@@ -4,7 +4,7 @@
 %bcond_with	verbose		# verbose build (V=1)
 #
 %define		pname	e1000
-%define		rel	1
+%define		rel	2
 #
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
@@ -67,6 +67,11 @@ EOF
 %install
 rm -rf $RPM_BUILD_ROOT
 %install_kernel_modules -m src/%{pname} -d kernel/drivers/net -n %{pname} -s current
+# blacklist kernel module
+cat > $RPM_BUILD_ROOT/etc/modprobe.d/%{_kernel_ver}/%{pname}.conf <<'EOF'
+blacklist e1000
+alias e1000 e1000-current
+EOF
 
 %clean
 rm -rf $RPM_BUILD_ROOT
