@@ -45,10 +45,7 @@ Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
-%if %{with dist_kernel}
-%requires_releq_kernel
-Requires(postun):	%releq_kernel
-%endif
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 Obsoletes:	e1000
 Obsoletes:	linux-net-e1000
 
