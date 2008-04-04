@@ -29,6 +29,8 @@ Source0:	http://dl.sourceforge.net/e1000/%{pname}-%{version}.tar.gz
 URL:		http://sourceforge.net/projects/e1000/
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
 BuildRequires:	rpmbuild(macros) >= 1.379
+# gcc fails on ac-ppc, ac-sparc has no enable/disable_irq symbols
+ExcludeArch:	ppc sparc
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
