@@ -11,11 +11,8 @@
 %if %{without kernel}
 %undefine with_dist_kernel
 %endif
-%if "%{_alt_kernel}" != "%{nil}"
-%undefine	with_userspace
-%endif
 
-%define		rel	1
+%define		rel		2
 %define		pname	e1000
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
@@ -28,7 +25,7 @@ Source0:	http://dl.sourceforge.net/e1000/%{pname}-%{version}.tar.gz
 # Source0-md5:	744d801c29a3c67713228aea96e17c86
 URL:		http://sourceforge.net/projects/e1000/
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
-BuildRequires:	rpmbuild(macros) >= 1.379
+BuildRequires:	rpmbuild(macros) >= 1.452
 # gcc fails on ac-ppc, ac-sparc has no enable/disable_irq symbols
 ExcludeArch:	ppc sparc
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -49,6 +46,7 @@ Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 %{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 Obsoletes:	e1000
+Obsoletes:	kernel%{_alt_kernel}-smp-net-e1000
 Obsoletes:	linux-net-e1000
 
 %description -n kernel%{_alt_kernel}-net-e1000
