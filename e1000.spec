@@ -26,12 +26,12 @@
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
 Name:		%{pname}%{_alt_kernel}
-Version:	7.6.15.5
+Version:	8.0.3.1
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/e1000/%{pname}-%{version}.tar.gz
-# Source0-md5:	744d801c29a3c67713228aea96e17c86
+# Source0-md5:	2988cb6e296e9b2fa2eb5141a0baadd9
 URL:		http://sourceforge.net/projects/e1000/
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.330
@@ -95,9 +95,11 @@ Ten pakiet zawiera sterownik dla Linuksa SMP do kart sieciowych
 %setup -q -n %{pname}-%{version}
 cat > src/Makefile <<'EOF'
 obj-m := e1000.o
-e1000-objs := e1000_main.o e1000_82540.o e1000_82542.o e1000_82571.o e1000_82541.o \
-e1000_82543.o e1000_ich8lan.o e1000_80003es2lan.o e1000_mac.o e1000_nvm.o e1000_phy.o \
-e1000_manage.o e1000_param.o e1000_ethtool.o kcompat.o e1000_api.o
+e1000-objs := e1000_main.o e1000_82540.o e1000_82542.o e1000_82541.o e1000_82543.o \
+e1000_mac.o e1000_nvm.o e1000_phy.o e1000_manage.o e1000_param.o e1000_ethtool.o \
+kcompat.o e1000_api.o
+
+EXTRA_CFLAGS=-DDRIVER_E1000
 EOF
 
 %build
