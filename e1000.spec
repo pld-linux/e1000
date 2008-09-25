@@ -50,7 +50,7 @@ Ten pakiet zawiera sterownik dla Linuksa do kart sieciowych
 %package -n kernel%{_alt_kernel}-net-e1000
 Summary:	Intel(R) PRO/1000 driver for Linux SMP
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
-Release:	%{_rel}@%{_kernel_ver_str}
+Release:	%{_rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
@@ -72,7 +72,7 @@ Ten pakiet zawiera sterownik dla Linuksa SMP do kart sieciowych
 %package -n kernel%{_alt_kernel}-smp-net-e1000
 Summary:	Intel(R) PRO/1000 driver for Linux SMP
 Summary(pl):	Sterownik do karty Intel(R) PRO/1000
-Release:	%{_rel}@%{_kernel_ver_str}
+Release:	%{_rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
