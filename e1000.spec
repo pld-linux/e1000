@@ -9,11 +9,13 @@
 %endif
 
 %if %{without kernel}
-%undefine with_dist_kernel
+%undefine	with_dist_kernel
 %endif
 %if "%{_alt_kernel}" != "%{nil}"
 %undefine	with_userspace
 %endif
+# nothing to be placed to debuginfo package
+%define		_enable_debug_packages	0
 
 %define		rel	7
 %define		pname	e1000
