@@ -5,29 +5,27 @@
 %bcond_without	smp		# don't build SMP module
 %bcond_without	up		# don't build UP module
 %bcond_with	verbose		# verbose build (V=1)
-%bcond_with	grsec_kernel	# build for kernel-grsecurity
 
 %ifarch sparc
 %undefine	with_smp
 %endif
 
 %if %{without kernel}
-%undefine with_dist_kernel
-%endif
-%if %{with kernel} && %{with dist_kernel} && %{with grsec_kernel}
-%define	alt_kernel	grsecurity
+%undefine	 with_dist_kernel
 %endif
 %if "%{_alt_kernel}" != "%{nil}"
 %undefine	with_userspace
 %endif
+# nothing to be placed to debuginfo package
+%define		_enable_debug_packages	0
 
-%define		_rel	1
+%define		rel		2
 %define		pname	e1000
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
 Name:		%{pname}%{_alt_kernel}
 Version:	8.0.3.1
-Release:	%{_rel}
+Release:	%{rel}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/e1000/%{pname}-%{version}.tar.gz
@@ -41,29 +39,25 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 This package contains the Linux driver for the Intel(R) PRO/1000
-family of 10/100/1000 Ethernet network adapters.
+adapters with 8254x chipsets.
 
 %description -l pl.UTF-8
-Ten pakiet zawiera sterownik dla Linuksa do kart sieciowych
-10/100/1000Mbit z rodziny Intel(R) PRO/1000.
+Ten pakiet zawiera sterownik dla Linuksa do kart sieciowych z rodziny
+Intel(R) PRO/1000 opartych o układy 8254x.
 
 %package -n kernel%{_alt_kernel}-net-e1000
-Summary:	Intel(R) PRO/1000 driver for Linux SMP
+Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
-Release:	%{_rel}@%{_kernel_vermagic}
+Release:	%{rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
-%if %{with dist_kernel}
-%requires_releq_kernel_up
-Requires(postun):	%releq_kernel_up
-%endif
-Provides:	kernel(e1000)
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 Obsoletes:	e1000
 Obsoletes:	linux-net-e1000
 
 %description -n kernel%{_alt_kernel}-net-e1000
-This package contains the Linux SMP driver for the Intel(R) PRO/1000
-family of 10/100/1000 Ethernet network adapters.
+This package contains the Linux driver for the Intel(R) PRO/1000
+adapters with 8254x chipsets.
 
 %description -n kernel%{_alt_kernel}-net-e1000 -l pl.UTF-8
 Ten pakiet zawiera sterownik dla Linuksa SMP do kart sieciowych
@@ -72,20 +66,16 @@ Ten pakiet zawiera sterownik dla Linuksa SMP do kart sieciowych
 %package -n kernel%{_alt_kernel}-smp-net-e1000
 Summary:	Intel(R) PRO/1000 driver for Linux SMP
 Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
-Release:	%{_rel}@%{_kernel_vermagic}
+Release:	%{rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
-%if %{with dist_kernel}
-%requires_releq_kernel_smp
-Requires(postun):	%releq_kernel_smp
-%endif
-Provides:	kernel(e1000)
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}-smp(vermagic) = %{_kernel_ver}}
 Obsoletes:	e1000
 Obsoletes:	linux-net-e1000
 
 %description -n kernel%{_alt_kernel}-smp-net-e1000
-This package contains the Linux SMP driver for the Intel(R) PRO/1000
-family of 10/100/1000 Ethernet network adapters.
+This package contains the Linux driver for the Intel(R) PRO/1000
+adapters with 8254x chipsets.
 
 %description -n kernel%{_alt_kernel}-smp-net-e1000 -l pl.UTF-8
 Ten pakiet zawiera sterownik dla Linuksa SMP do kart sieciowych
@@ -108,6 +98,11 @@ EOF
 %install
 rm -rf $RPM_BUILD_ROOT
 %install_kernel_modules -m src/%{pname} -d kernel/drivers/net -n %{pname} -s current
+# blacklist kernel module
+cat > $RPM_BUILD_ROOT/etc/modprobe.d/%{_kernel_ver}/%{pname}.conf <<'EOF'
+blacklist e1000
+alias e1000 e1000-current
+EOF
 
 %clean
 rm -rf $RPM_BUILD_ROOT
