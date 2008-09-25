@@ -24,7 +24,7 @@
 %define		_rel	1
 %define		pname	e1000
 Summary:	Intel(R) PRO/1000 driver for Linux
-Summary(pl):	Sterownik do karty Intel(R) PRO/1000
+Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
 Name:		%{pname}%{_alt_kernel}
 Version:	8.0.3.1
 Release:	%{_rel}
@@ -43,13 +43,13 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 This package contains the Linux driver for the Intel(R) PRO/1000
 family of 10/100/1000 Ethernet network adapters.
 
-%description -l pl
+%description -l pl.UTF-8
 Ten pakiet zawiera sterownik dla Linuksa do kart sieciowych
 10/100/1000Mbit z rodziny Intel(R) PRO/1000.
 
 %package -n kernel%{_alt_kernel}-net-e1000
 Summary:	Intel(R) PRO/1000 driver for Linux SMP
-Summary(pl):	Sterownik do karty Intel(R) PRO/1000
+Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
 Release:	%{_rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -65,13 +65,13 @@ Obsoletes:	linux-net-e1000
 This package contains the Linux SMP driver for the Intel(R) PRO/1000
 family of 10/100/1000 Ethernet network adapters.
 
-%description -n kernel%{_alt_kernel}-net-e1000 -l pl
+%description -n kernel%{_alt_kernel}-net-e1000 -l pl.UTF-8
 Ten pakiet zawiera sterownik dla Linuksa SMP do kart sieciowych
 10/100/1000Mbit z rodziny Intel(R) PRO/1000.
 
 %package -n kernel%{_alt_kernel}-smp-net-e1000
 Summary:	Intel(R) PRO/1000 driver for Linux SMP
-Summary(pl):	Sterownik do karty Intel(R) PRO/1000
+Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
 Release:	%{_rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -87,7 +87,7 @@ Obsoletes:	linux-net-e1000
 This package contains the Linux SMP driver for the Intel(R) PRO/1000
 family of 10/100/1000 Ethernet network adapters.
 
-%description -n kernel%{_alt_kernel}-smp-net-e1000 -l pl
+%description -n kernel%{_alt_kernel}-smp-net-e1000 -l pl.UTF-8
 Ten pakiet zawiera sterownik dla Linuksa SMP do kart sieciowych
 10/100/1000Mbit z rodziny Intel(R) PRO/1000.
 
