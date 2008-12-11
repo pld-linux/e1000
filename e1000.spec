@@ -35,11 +35,11 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 This package contains the Linux driver for the Intel(R) PRO/1000
-adapters with 8254x chipsets.
+adapters with 8254x non-PCIe chipsets.
 
 %description -l pl.UTF-8
 Ten pakiet zawiera sterownik dla Linuksa do kart sieciowych z rodziny
-Intel(R) PRO/1000 opartych o układy 8254x.
+Intel(R) PRO/1000 opartych o układy 8254x niebędące PCIe.
 
 %package -n kernel%{_alt_kernel}-net-e1000
 Summary:	Intel(R) PRO/1000 driver for Linux
@@ -56,11 +56,11 @@ Obsoletes:	linux-net-e1000
 
 %description -n kernel%{_alt_kernel}-net-e1000
 This package contains the Linux driver for the Intel(R) PRO/1000
-adapters with 8254x chipsets.
+adapters with 8254x non-PCIe chipsets.
 
 %description -n kernel%{_alt_kernel}-net-e1000 -l pl.UTF-8
 Ten pakiet zawiera sterownik dla Linuksa do kart sieciowych z rodziny
-Intel(R) PRO/1000 opartych o układy 8254x.
+Intel(R) PRO/1000 opartych o układy 8254x nie będące PCIe.
 
 %prep
 %setup -q -n %{pname}-%{version}
