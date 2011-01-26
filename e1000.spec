@@ -17,7 +17,7 @@
 # nothing to be placed to debuginfo package
 %define		_enable_debug_packages	0
 
-%define		rel	32
+%define		rel	33
 %define		pname	e1000
 Summary:	Intel(R) PRO/1000 driver for Linux
 Summary(pl.UTF-8):	Sterownik do karty Intel(R) PRO/1000
@@ -70,7 +70,7 @@ e1000-objs := e1000_main.o e1000_82540.o e1000_82542.o e1000_82541.o e1000_82543
 e1000_mac.o e1000_nvm.o e1000_phy.o e1000_manage.o e1000_param.o e1000_ethtool.o \
 kcompat.o e1000_api.o
 
-EXTRA_CFLAGS=-DDRIVER_E1000
+EXTRA_CFLAGS=-DDRIVER_E1000 -DVLAN_GROUP_ARRAY_LEN=VLAN_N_VID
 EOF
 
 %build
